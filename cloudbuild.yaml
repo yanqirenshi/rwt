@@ -10,3 +10,7 @@ steps:
   - name: 'gcr.io/cloud-builders/gcloud'
     dir: 'web'
     args: ['app', 'deploy', 'app.yaml']
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    dir: 'api'
+    args: ['app', 'deploy', 'app.yaml']
