@@ -68,7 +68,7 @@ WORKDIR /home/appl-user
 
 RUN mkdir -p /home/appl-user/prj/rwt.api
 
-COPY ./gcp-sbcl-woo.ros /home/appl-user/prj/rwt.api/gcp-sbcl-woo.ros
+COPY ./rwt.ros /home/appl-user/prj/rwt.api/rwt.ros
 
 
 ##### ################################################################
@@ -79,4 +79,4 @@ WORKDIR /home/appl-user/tmp
 
 EXPOSE 8080
 
-CMD ["/usr/bin/ros", "/home/appl-user/prj/rwt.api/gcp-sbcl-woo.ros"]
+CMD ["/usr/bin/ros", "/home/appl-user/prj/rwt.api/rwt.ros"]
