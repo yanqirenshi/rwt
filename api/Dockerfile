@@ -58,7 +58,7 @@ WORKDIR /home/appl-user
 RUN ros setup
 
 RUN ros install woo
-
+RUN ros install clack
 
 ##### ################################################################
 #####   setting rwt.api
