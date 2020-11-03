@@ -19,15 +19,38 @@ exec ros -Q -- $0 "$@"
 
 ;; ASDF
 (push #P"~/.asdf/" asdf:*central-registry*)
-(ql:quickload :woo)
 
+
+;; woo
+(ql:quickload '(woo optima))
+
+
+;; operators
+(defun ensure-port (port)
+  (parse-integer (or port "8080")))
+
+(defun response (code msg)
+  (list code
+        (list :content-type "text/plain")
+        (list msg)))
+
+(defun handler (env)
+  (let ((path (getf env :path-info)))
+    (cond ((string= "/readiness_check" path)
+           (response 200 "Readiness Check OK!"))
+          ((string= "/liveness_check" path)
+           (response 200 "Liveness Check OK!"))
+          (t (response 404 "Page Not Found")))))
+
+(defun start-server ()
+  (woo:run
+   #'handler
+   :port (ensure-port (uiop:getenv "PORT"))
+   :address "0.0.0.0"))
+
+
+;; Main
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (woo:run
-   (lambda (env)
-     (declare (ignore env))
-     '(200 (:content-type "text/plain") ("Hello, World")))
-   :port (parse-integer (or (uiop:getenv "PORT")
-                            "8080"))
-   :address "0.0.0.0"))
+  (start-server))
 ;;; vim: set ft=lisp lisp:
