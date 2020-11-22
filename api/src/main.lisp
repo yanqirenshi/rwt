@@ -1,5 +1,8 @@
 (defpackage rwt.api
-  (:use :cl))
+  (:use :cl)
+  (:export *router-v1*))
 (in-package :rwt.api)
 
-;; blah blah blah.
+(defvar *router-v1*
+  (lambda (env)
+    `(200 (:content-type "text/plain") ,(list (getf env :path-info)))))

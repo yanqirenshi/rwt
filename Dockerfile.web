@@ -1,0 +1,18 @@
+##### ################################################################
+#####
+#####    Build
+#####    -----
+#####      docker build -t rwt.web -f Dockerfile .
+#####
+#####    Run
+#####    ---
+#####      docker run  -it rwt.web
+#####      docker run  -d  rwt.web
+#####      docker exec -it {id} /bin/bash
+#####
+##### ################################################################
+FROM node
+
+MAINTAINER Renshi <yanqirenshi@gmail.com>
+
+WORKDIR /usr/src/app

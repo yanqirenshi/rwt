@@ -21,7 +21,7 @@ exec ros -Q -- $0 "$@"
 (push #P"~/.asdf/" asdf:*central-registry*)
 
 ;; load libs
-(ql:quickload '(woo clack))
+(ql:quickload '(woo clack rwt.api))
 
 
 ;;;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -70,9 +70,11 @@ exec ros -Q -- $0 "$@"
 
 (defun start-server ()
   (setf *svr*
-        (clack:clackup (lack:builder :session
-                                     (:static :path "/public/" :root #P"/static-files/")
-                                     #'router)
+        (clack:clackup (lack:builder
+                        :session
+                        (:static :path "/public/" :root #P"/static-files/")
+                        (:mount "/api/v1" rwt.api:*router-v1*)
+                        #'router)
                        :port    (ensure-port    (uiop:getenv "PORT"))
                        :address (ensure-address (uiop:getenv "ADDRESS")))))
 
