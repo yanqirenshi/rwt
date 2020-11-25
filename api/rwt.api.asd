@@ -16,6 +16,12 @@
                "rove")
   :components ((:module "tests"
                 :components
-                ((:file "main"))))
+                        ((:file "main")
+                         (:module "router"
+                          :components
+                                  ((:file "package")
+                                   (:file "utils")
+                                   (:file "v1")
+                                   (:file "terminator"))))))
   :description "Test system for rwt.api"
   :perform (test-op (op c) (symbol-call :rove :run c)))

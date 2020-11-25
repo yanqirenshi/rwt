@@ -40,44 +40,31 @@ exec ros -Q -- $0 "$@"
 (defun ensure-address (address)
   (or address "0.0.0.0"))
 
-(defun response (code msg)
-  (list code
-        (list :content-type "text/plain")
-        (list msg)))
-
-(defvar *svr* nil)
-(defvar *balus* nil)
-
-(defun readiness-check (env)
-  (declare (ignore env))
-  (response 200 "Readiness Check OK!"))
-
-(defun liveness_check (env)
-  (declare (ignore env))
-  (response 200 "Liveness Check OK!"))
-
 (defun balus (env)
   (declare (ignore env))
   (progn (setf *balus* t)
-         (response 201 "Good by!")))
-
-(defun router (env)
-  (let ((path (getf env :path-info)))
-    (cond ((string= "/readiness_check" path) (readiness-check env))
-          ((string= "/liveness_check"  path) (liveness_check  env))
-          ((string= "/balus"           path) (balus           env))
-          (t (response 404 "Page Not Found")))))
+         (list 201
+               (list :content-type "text/plain")
+               (list "あ～あ～目がぁ～"))))
 
 (defun start-server ()
   (setf *svr*
-        (clack:clackup (lack:builder
-                        :session
-                        (:static :path "/public/" :root #P"/static-files/")
-                        (:mount "/api/v1" rwt.api:*router-v1*)
-                        #'router)
-                       :port    (ensure-port    (uiop:getenv "PORT"))
-                       :address (ensure-address (uiop:getenv "ADDRESS")))))
+        (clack:clackup
+         (lack:builder
+          :session
+          (:static :path "/public/" :root #P"/static-files/")
+          (:mount "/api/v1" rwt.api.router:*v1*)
+          (:mount "/balus" #'balus)
+          rwt.api.router:*terminator*)
+         :port    (ensure-port    (uiop:getenv "PORT"))
+         :address (ensure-address (uiop:getenv "ADDRESS")))))
 
+
+;;;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;
+;;;;;   Main
+;;;;;
+;;;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun gc-loop ()
   (do ((counter 0 (1+ counter))
        (gc-point 88888888))
@@ -87,11 +74,6 @@ exec ros -Q -- $0 "$@"
       (setf counter 0)
       (sb-ext:gc))))
 
-;;;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;
-;;;;;   Main
-;;;;;
-;;;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun main (&rest argv)
   (declare (ignorable argv))
   (start-server)
